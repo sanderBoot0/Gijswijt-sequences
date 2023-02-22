@@ -4,30 +4,38 @@ def hasjh(arr, index, length):
     return hash(tuple(arr[(index+1)-length:index+1]))
 
 sequence = [1, 1, 2]
-hasjmap = [[hasjh(sequence, 0, 1)],
+hashmap = [[hasjh(sequence, 0, 1)],
             [hasjh(sequence, 1, 1), hasjh(sequence, 1, 2)],
             [hasjh(sequence, 2, 1), hasjh(sequence, 2, 2), hasjh(sequence, 2, 3)]]
 
 for _ in range(10):
-    biggest = 1
-    for variationLength in range(1, math.floor(len(sequence)/2)+1):
-        checkHash = hasjh(sequence, len(sequence)-1, variationLength)
-        maxNumberOfRepeats = math.floor(len(sequence)/variationLength)
+    maxRepeats = 1
 
-        i = 1
+    # Check for each possible length the repeating sequence can be
+    for repeatLength in range(1, math.floor(len(sequence)/2)+1):
+
+        # The hash of the subsequence we are going to check
+        checkHash = hasjh(sequence, len(sequence)-1, repeatLength)
+
+        # The maximal number of repeats
+        maxNumberOfRepeats = math.floor(len(sequence)/repeatLength)
+
         repeats = 1
-        while i < maxNumberOfRepeats:
-            endIndex = len(sequence) - i * variationLength - 1
-            if hasjmap[endIndex][variationLength-1] != checkHash:
+        endIndex = len(sequence) - repeatLength - 1
+        while endIndex > repeatLength:
+            if hashmap[endIndex][repeatLength-1] != checkHash:
                 break
             
             repeats += 1
-            i += 1
+            endIndex -= repeatLength
 
-        if repeats > biggest:
-            biggest = repeats
+        if repeats > maxRepeats:
+            maxRepeats = repeats
 
-    sequence.append(biggest)
-    hasjmap.append(list(map(lambda x: hasjh(sequence, len(sequence)-1, x), range(1, len(sequence)+1))))
+    # Add the maximum number of repeats
+    sequence.append(maxRepeats)
+
+    # Generate the new hashes and add them to the hasmap
+    hashmap.append(list(map(lambda x: hasjh(sequence, len(sequence)-1, x), range(1, len(sequence)+1))))
 
 print(sequence)
