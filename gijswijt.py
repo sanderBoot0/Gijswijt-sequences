@@ -9,7 +9,7 @@ hasjmap = [[hasjh(sequence, 0, 1)],
             [hasjh(sequence, 1, 1), hasjh(sequence, 1, 2)],
             [hasjh(sequence, 2, 1), hasjh(sequence, 2, 2), hasjh(sequence, 2, 3)]]
 
-for _ in range(1):
+for _ in range(10):
     biggest = 0
     for variationLength in range(1, math.floor(len(sequence)/2)+1):
         same = True
@@ -39,5 +39,11 @@ for _ in range(1):
         sequence.append(1)
     else: 
         sequence.append(biggest)
+
+    hasjes = []
+    for i in range(1, len(sequence)+1):
+        hasjes.append(hasjh(sequence, len(sequence)-1, i))
+
+    hasjmap.append(hasjes)
 
 print(sequence)
