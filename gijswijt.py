@@ -19,7 +19,7 @@ def hashList(arr : List[int], hashmap : List[List[int]], index : int, length : i
     if length == 1:
         return hash(arr[index])
     else:
-        return hash((hashmap[index-1][length-2], arr[index]))
+        return hash((hashmap[index-1][length-2][0], arr[index]))
 
 def getNextNumber(sequence : List[int], hashmap : List[List[int]]):
     maxRepeats = 1
@@ -72,7 +72,7 @@ def krul(arr):
             
     return k
     
-for length in (100, 1000, 5000):
+def compare(length):
     print(f"length: {length}")
 
     sequence = [1, 1, 2]
@@ -103,15 +103,18 @@ for length in (100, 1000, 5000):
         sequence2.append(krul(sequence2))
     t4 = time.time()
     print(f"Elapsed: {round((t4 - t3) * 1000)} ms (n^3)")
+    print(f"Equal: {sequence == sequence2}")
 
-"""
-length: 100
-Elapsed: 11 ms hashmap
-Elapsed: 2 ms (n^3)
-length: 1000
-Elapsed: 892 ms hashmap
-Elapsed: 449 ms (n^3)
-length: 5000
-Elapsed: 20113 ms hashmap
-Elapsed: 33548 ms (n^3)
-"""
+compare(10)
+compare(20)
+compare(40)
+compare(80)
+compare(160)
+compare(320)
+compare(640)
+compare(1280)
+compare(2560)
+compare(5120)
+# compare(10240)
+# compare(20480)
+# compare(40960)
