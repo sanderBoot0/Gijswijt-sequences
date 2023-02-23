@@ -5,7 +5,11 @@ import time
 def hashList(arr : List[int], hashmap : List[List[int]], index : int, length : int) -> int:
     """This function turns part of an array into a hash
 
-    The function slices the array into {length} ending with {index}
+    The function creates a new hash based on the hash with lenght-1 combined with the integer at {index}
+
+    2 cases:
+    length == 1: hash <- the hash of sequence[index]
+    length  > 1: hash <- hashmap{hash of sequence with length -1} combined with sequence[index]
 
     Args:
         arr (List[int]): The entire sequence array
@@ -22,6 +26,15 @@ def hashList(arr : List[int], hashmap : List[List[int]], index : int, length : i
         return hash((hashmap[index-1][length-2][0], arr[index]))
 
 def getNextNumber(sequence : List[int], hashmap : List[List[int]]):
+    """This function finds the next number in the Gijswijt sequence
+
+    Args:
+        sequence (List[int]): The current sequence
+        hashmap (List[List[int]]): The hashmap filled with hashes for each variation of subsequences
+
+    Returns:
+        int: Returns the next gijswijt number
+    """
     maxRepeats = 1
 
     # Check for each possible length the repeating sequence can be
