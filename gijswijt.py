@@ -2,8 +2,6 @@ import math
 from typing import List, Tuple
 import time
 
-length = 3000
-
 def hashList(arr : List[int], hashmap : List[List[int]], index : int, length : int) -> int:
     """This function turns part of an array into a hash
 
@@ -61,30 +59,6 @@ def generateHashmapNumbers(sequence : List[int], hashmap : List[List[int]]) -> L
 
     return l
 
-
-
-sequence = [1, 1, 2]
-
-# The hasmap object is an 2D array
-# Each row indicates a index in the sequence array. r=0 refers to sequence[0], r=2 refers to sequence[2]
-# Each column indicates the length of the sequence. i=2, c=0 refers to sequence[2], c=2 refers to sequence[0:3]
-hashmap = [[(hashList(sequence, [], 0, 1), 0)]]
-hashmap.append([(hashList(sequence, hashmap, 1, 1), 1), (hashList(sequence, hashmap, 1, 2), 0)])
-hashmap.append([(hashList(sequence, hashmap, 2, 1), 0), (hashList(sequence, hashmap, 2, 2), 0), (hashList(sequence, hashmap, 2, 3), 0)])
-
-t1 = time.time()
-for _ in range(length):
-    # Add the maximum number of repeats
-    sequence.append(getNextNumber(sequence, hashmap))
-
-    # Generate the new hashes and add them to the hasmap
-    hashmap.append(generateHashmapNumbers(sequence, hashmap))
-t2 = time.time()
-
-# print(sequence)
-print(f"Elapsed: {round((t2 - t1) * 1000)} ms hashmap")
-
-
 def krul(arr):
     l = len(arr)
     k = 1 # k in XY^k (curling number)    
@@ -98,10 +72,46 @@ def krul(arr):
             
     return k
     
-sequence2 = [1, 1, 2]
-    
-t3 = time.time()
-for _ in range(length):
-    sequence2.append(krul(sequence2))
-t4 = time.time()
-print(f"Elapsed: {round((t4 - t3) * 1000)} ms (n^3)")
+for length in (100, 1000, 5000):
+    print(f"length: {length}")
+
+    sequence = [1, 1, 2]
+
+    # The hasmap object is an 2D array
+    # Each row indicates a index in the sequence array. r=0 refers to sequence[0], r=2 refers to sequence[2]
+    # Each column indicates the length of the sequence. i=2, c=0 refers to sequence[2], c=2 refers to sequence[0:3]
+    hashmap = [[(hashList(sequence, [], 0, 1), 0)]]
+    hashmap.append([(hashList(sequence, hashmap, 1, 1), 1), (hashList(sequence, hashmap, 1, 2), 0)])
+    hashmap.append([(hashList(sequence, hashmap, 2, 1), 0), (hashList(sequence, hashmap, 2, 2), 0), (hashList(sequence, hashmap, 2, 3), 0)])
+
+    t1 = time.time()
+    for _ in range(length):
+        # Add the maximum number of repeats
+        sequence.append(getNextNumber(sequence, hashmap))
+
+        # Generate the new hashes and add them to the hasmap
+        hashmap.append(generateHashmapNumbers(sequence, hashmap))
+    t2 = time.time()
+
+    # print(sequence)
+    print(f"Elapsed: {round((t2 - t1) * 1000)} ms hashmap")
+
+    sequence2 = [1, 1, 2]
+        
+    t3 = time.time()
+    for _ in range(length):
+        sequence2.append(krul(sequence2))
+    t4 = time.time()
+    print(f"Elapsed: {round((t4 - t3) * 1000)} ms (n^3)")
+
+"""
+length: 100
+Elapsed: 11 ms hashmap
+Elapsed: 2 ms (n^3)
+length: 1000
+Elapsed: 892 ms hashmap
+Elapsed: 449 ms (n^3)
+length: 5000
+Elapsed: 20113 ms hashmap
+Elapsed: 33548 ms (n^3)
+"""
