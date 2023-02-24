@@ -23,7 +23,7 @@ def hashList(arr : List[int], hashmap : List[List[int]], index : int, length : i
     if length == 1:
         return hash(arr[index])
     else:
-        return hash((hashmap[index-1][length-2][0], arr[index]))
+        return hash((hashmap[-1][-(length-1)][0], arr[index]))
 
 def getNextNumber(sequence : List[int], hashmap : List[List[int]]):
     """This function finds the next number in the Gijswijt sequence
@@ -42,13 +42,13 @@ def getNextNumber(sequence : List[int], hashmap : List[List[int]]):
 
         # Select the number of repeats from the last row and add one
         # '+ 1' should only be done when the hashes match, but it doesn't really matter
-        repeats = hashmap[-1][repeatLength-1][1] + 1
+        repeats = hashmap[-1][-repeatLength][1] + 1
 
         maxRepeats = max(maxRepeats, repeats)
 
     return maxRepeats
 
-def generateHashmapNumbers(sequence : List[int], hashmap : List[List[int]]) -> List[List[int]]:
+def generateHashmapNumbers(sequence : List[int], hashmap : List[List[Tuple[int, int]]]) -> List[Tuple[int, int]]:
     """This function generates the new row of hash numbers.
 
     The function will check if the hash of the subsequence equal is to the hash of the previous occurance with that length.
@@ -63,14 +63,21 @@ def generateHashmapNumbers(sequence : List[int], hashmap : List[List[int]]) -> L
     """
     l = []
 
-    for x in range(1, len(sequence)+1):
+    for x in range(len(sequence), 0, -1):
         has = hashList(sequence, hashmap, len(sequence)-1, x)
         n = 0
-        if x <= (len(sequence)//2) and has == hashmap[-x][x-1][0]:
-                n = hashmap[-x][x-1][1] + 1            
+        if x <= (len(sequence)//2) and has == hashmap[-x][-x][0]:
+                n = hashmap[-x][-x][1] + 1            
         l.append((has, n))
 
     return l
+
+def cleanupHashmap(sequence : List[int], hashmap : List[List[int]]) -> List[List[Tuple[int, int]]]:
+
+    if (len(sequence)//2) % 2 == 0:
+        hashmap.pop(0)
+
+    return hashmap
 
 def krul(arr):
     l = len(arr)
@@ -93,9 +100,9 @@ def compare(length):
     # The hasmap object is an 2D array
     # Each row indicates a index in the sequence array. r=0 refers to sequence[0], r=2 refers to sequence[2]
     # Each column indicates the length of the sequence. i=2, c=0 refers to sequence[2], c=2 refers to sequence[0:3]
-    hashmap = [[(hashList(sequence, [], 0, 1), 0)]]
-    hashmap.append([(hashList(sequence, hashmap, 1, 1), 1), (hashList(sequence, hashmap, 1, 2), 0)])
-    hashmap.append([(hashList(sequence, hashmap, 2, 1), 0), (hashList(sequence, hashmap, 2, 2), 0), (hashList(sequence, hashmap, 2, 3), 0)])
+    hashmap = [[(hashList(sequence, [1], 0, 1), 0)]]
+    hashmap.append([(hashList([1, 1], hashmap, 1, 2), 1), (hashList([1, 1], hashmap, 1, 1), 1)])
+    hashmap.append([(hashList([1, 1, 2], hashmap, 2, 3), 0), (hashList([1, 1, 2], hashmap, 2, 2), 0), (hashList([1, 1, 2], hashmap, 2, 1), 0)])
 
     t1 = time.time()
     for _ in range(length):
@@ -104,6 +111,10 @@ def compare(length):
 
         # Generate the new hashes and add them to the hasmap
         hashmap.append(generateHashmapNumbers(sequence, hashmap))
+
+        # clean up hashmap
+        hashmap = cleanupHashmap(sequence, hashmap)
+
     t2 = time.time()
 
     # print(sequence)
@@ -116,18 +127,18 @@ def compare(length):
         sequence2.append(krul(sequence2))
     t4 = time.time()
     print(f"Elapsed: {round((t4 - t3) * 1000)} ms (n^3)")
-    print(f"Equal: {sequence == sequence2}")
 
-compare(10)
-# compare(20)
-# compare(40)
-# compare(80)
-# compare(160)
-# compare(320)
-# compare(640)
-# compare(1280)
-# compare(2560)
-# compare(5120)
-# compare(10240)
-# compare(20480)
-# compare(40960)
+# compare(100)
+# compare(200)
+# compare(500)
+# compare(1000)
+# compare(2000)
+# compare(5000)
+# compare(6000)
+# compare(7000)
+# compare(8000)
+# compare(9000)
+# compare(10000)
+# compare(20000)
+compare(50000)
+# compare(100000)
