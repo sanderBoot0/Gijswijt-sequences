@@ -42,7 +42,7 @@ def getNextNumber(sequence : List[int], hashmap : List[List[int]]):
 
         # Select the number of repeats from the last row and add one
         # '+ 1' should only be done when the hashes match, but it doesn't really matter
-        repeats = hashmap[len(sequence) - 1][repeatLength-1][1] + 1
+        repeats = hashmap[-1][repeatLength-1][1] + 1
 
         maxRepeats = max(maxRepeats, repeats)
 
@@ -66,8 +66,8 @@ def generateHashmapNumbers(sequence : List[int], hashmap : List[List[int]]) -> L
     for x in range(1, len(sequence)+1):
         has = hashList(sequence, hashmap, len(sequence)-1, x)
         n = 0
-        if x <= (len(sequence)//2) and has == hashmap[len(sequence)-1-x][x-1][0]:
-                n = hashmap[len(sequence)-1-x][x-1][1] + 1            
+        if x <= (len(sequence)//2) and has == hashmap[-x][x-1][0]:
+                n = hashmap[-x][x-1][1] + 1            
         l.append((has, n))
 
     return l
@@ -119,15 +119,15 @@ def compare(length):
     print(f"Equal: {sequence == sequence2}")
 
 compare(10)
-compare(20)
-compare(40)
-compare(80)
-compare(160)
-compare(320)
-compare(640)
-compare(1280)
-compare(2560)
-compare(5120)
+# compare(20)
+# compare(40)
+# compare(80)
+# compare(160)
+# compare(320)
+# compare(640)
+# compare(1280)
+# compare(2560)
+# compare(5120)
 # compare(10240)
 # compare(20480)
 # compare(40960)
