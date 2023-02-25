@@ -92,6 +92,30 @@ def krul(arr):
             
     return k
     
+def krul(arr): 
+    states = {1 : "0"}      # holds all possible states (valid patterns)    
+    freqs = {0 : 1}         # holds all encountered frequencies (at least 1)    
+    l = len(arr)
+    for i in range(1, l + 1):   # look at each entry in the array once        
+        for length, state in states.copy().items(): # loop through all possible states (with its length)            
+            mod = i % length    # figure out which index of the state we need to compare to            
+            if mod: 
+                cmp = state[length - mod] 
+            else: 
+                cmp = state[0] 
+                
+            if cmp == arr[l - i]:   # compare the current element with the relevant index in a state                
+                freqs[length] = i // length # save the frequency if the pattern aligns            
+            else:   
+                del(states[length]) # if it did not match, delete the state        
+                
+        if i <= l//2: 
+            states[i] = arr[l - i : l]  # this new state is also a possible state    
+            
+    return max(freqs.values()) # return maximum encountered frequency
+
+
+
 def compare(length):
     print(f"length: {length}")
 
@@ -104,29 +128,37 @@ def compare(length):
     hashmap.append([(hashList([1, 1], hashmap, 1, 2), 1), (hashList([1, 1], hashmap, 1, 1), 1)])
     hashmap.append([(hashList([1, 1, 2], hashmap, 2, 3), 0), (hashList([1, 1, 2], hashmap, 2, 2), 0), (hashList([1, 1, 2], hashmap, 2, 1), 0)])
 
-    t1 = time.time()
-    for _ in range(length):
-        # Add the maximum number of repeats
-        sequence.append(getNextNumber(sequence, hashmap))
+    # t1 = time.time()
+    # for _ in range(length):
+    #     # Add the maximum number of repeats
+    #     sequence.append(getNextNumber(sequence, hashmap))
 
-        # Generate the new hashes and add them to the hasmap
-        hashmap.append(generateHashmapNumbers(sequence, hashmap))
+    #     # Generate the new hashes and add them to the hasmap
+    #     hashmap.append(generateHashmapNumbers(sequence, hashmap))
 
-        # clean up hashmap
-        hashmap = cleanupHashmap(sequence, hashmap)
+    #     # clean up hashmap
+    #     hashmap = cleanupHashmap(sequence, hashmap)
 
-    t2 = time.time()
+    # t2 = time.time()
 
-    # print(sequence)
-    print(f"Elapsed: {round((t2 - t1) * 1000)} ms hashmap")
+    # # print(sequence)
+    # print(f"Elapsed: {round((t2 - t1) * 1000)} ms hashmap")
 
-    sequence2 = [1, 1, 2]
+    # sequence2 = [1, 1, 2]
         
-    t3 = time.time()
+    # t3 = time.time()
+    # for _ in range(length):
+    #     sequence2.append(krul(sequence2))
+    # t4 = time.time()
+    # print(f"Elapsed: {round((t4 - t3) * 1000)} ms (n^3)")
+
+    sequence3 = [1, 1, 2]
+
+    t5 = time.time()
     for _ in range(length):
-        sequence2.append(krul(sequence2))
-    t4 = time.time()
-    print(f"Elapsed: {round((t4 - t3) * 1000)} ms (n^3)")
+        sequence3.append(krul(sequence3))
+    t6 = time.time()
+    print(f"Elapsed: {round((t6 - t5) * 1000)} ms automaton")
 
 # compare(100)
 # compare(200)
