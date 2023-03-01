@@ -1,120 +1,7 @@
-import math
-from typing import List, Tuple
 import time
-
-def hashList(arr : List[int], hashmap : List[List[int]], index : int, length : int) -> int:
-    """This function turns part of an array into a hash
-
-    The function creates a new hash based on the hash with lenght-1 combined with the integer at {index}
-
-    2 cases:
-    length == 1: hash <- the hash of sequence[index]
-    length  > 1: hash <- hashmap{hash of sequence with length -1} combined with sequence[index]
-
-    Args:
-        arr (List[int]): The entire sequence array
-        index (int): The index of the last element
-        length (int): The length of the sequence that needs to be sliced
-
-    Returns:
-        int: The hash of the subsequence
-    """
-
-    if length == 1:
-        return hash(arr[index])
-    else:
-        return hash((hashmap[-1][-(length-1)][0], arr[index]))
-
-def getNextNumber(sequence : List[int], hashmap : List[List[int]]):
-    """This function finds the next number in the Gijswijt sequence
-
-    Args:
-        sequence (List[int]): The current sequence
-        hashmap (List[List[int]]): The hashmap filled with hashes for each variation of subsequences
-
-    Returns:
-        int: Returns the next gijswijt number
-    """
-    maxRepeats = 1
-
-    # Check for each possible length the repeating sequence can be
-    for repeatLength in range(1, (len(sequence)//2)+1):
-
-        # Select the number of repeats from the last row and add one
-        # '+ 1' should only be done when the hashes match, but it doesn't really matter
-        repeats = hashmap[-1][-repeatLength][1] + 1
-
-        maxRepeats = max(maxRepeats, repeats)
-
-    return maxRepeats
-
-def generateHashmapNumbers(sequence : List[int], hashmap : List[List[Tuple[int, int]]]) -> List[Tuple[int, int]]:
-    """This function generates the new row of hash numbers.
-
-    The function will check if the hash of the subsequence equal is to the hash of the previous occurance with that length.
-    If so, add 1 to the repeat integer
-
-    Args:
-        sequence (List[int]): The sequence list
-        hashmap (List[List[int]]): The current hashmap
-
-    Returns:
-        List[List[int]]: Returns the new row for the hashmap
-    """
-    l = []
-
-    for x in range(len(sequence), 0, -1):
-        has = hashList(sequence, hashmap, len(sequence)-1, x)
-        n = 0
-        if x <= (len(sequence)//2) and has == hashmap[-x][-x][0]:
-                n = hashmap[-x][-x][1] + 1            
-        l.append((has, n))
-
-    return l
-
-def cleanupHashmap(sequence : List[int], hashmap : List[List[int]]) -> List[List[Tuple[int, int]]]:
-
-    if (len(sequence)//2) % 2 == 0:
-        hashmap.pop(0)
-
-    return hashmap
-
-def krul(arr):
-    l = len(arr)
-    k = 1 # k in XY^k (curling number)    
-    
-    for i in range(1, l//2 + 1):
-        pattern = arr[l - i : l] 
-        j = 1   # frequency of this pattern        
-        while arr[l - (j+1) * i : l - j * i] == pattern:
-            j += 1
-            k = max(k, j) # select highest frequency    
-            
-    return k
-    
-def krul(arr): 
-    states = {1 : "0"}      # holds all possible states (valid patterns)    
-    freqs = {0 : 1}         # holds all encountered frequencies (at least 1)    
-    l = len(arr)
-    for i in range(1, l + 1):   # look at each entry in the array once        
-        for length, state in states.copy().items(): # loop through all possible states (with its length)            
-            mod = i % length    # figure out which index of the state we need to compare to            
-            if mod: 
-                cmp = state[length - mod] 
-            else: 
-                cmp = state[0] 
-                
-            if cmp == arr[l - i]:   # compare the current element with the relevant index in a state                
-                freqs[length] = i // length # save the frequency if the pattern aligns            
-            else:   
-                del(states[length]) # if it did not match, delete the state        
-                
-        if i <= l//2: 
-            states[i] = arr[l - i : l]  # this new state is also a possible state    
-            
-    return max(freqs.values()) # return maximum encountered frequency
-
-
+import krulnaive
+import krulautomaton
+import krulhashmap as hm
 
 def compare(length):
     print(f"length: {length}")
@@ -124,39 +11,39 @@ def compare(length):
     # The hasmap object is an 2D array
     # Each row indicates a index in the sequence array. r=0 refers to sequence[0], r=2 refers to sequence[2]
     # Each column indicates the length of the sequence. i=2, c=0 refers to sequence[2], c=2 refers to sequence[0:3]
-    hashmap = [[(hashList(sequence, [1], 0, 1), 0)]]
-    hashmap.append([(hashList([1, 1], hashmap, 1, 2), 1), (hashList([1, 1], hashmap, 1, 1), 1)])
-    hashmap.append([(hashList([1, 1, 2], hashmap, 2, 3), 0), (hashList([1, 1, 2], hashmap, 2, 2), 0), (hashList([1, 1, 2], hashmap, 2, 1), 0)])
+    hashmap = [[(hm.hashList(sequence, [1], 0, 1), 0)]]
+    hashmap.append([(hm.hashList([1, 1], hashmap, 1, 2), 1), (hm.hashList([1, 1], hashmap, 1, 1), 1)])
+    hashmap.append([(hm.hashList([1, 1, 2], hashmap, 2, 3), 0), (hm.hashList([1, 1, 2], hashmap, 2, 2), 0), (hm.hashList([1, 1, 2], hashmap, 2, 1), 0)])
 
-    # t1 = time.time()
-    # for _ in range(length):
-    #     # Add the maximum number of repeats
-    #     sequence.append(getNextNumber(sequence, hashmap))
+    t1 = time.time()
+    for _ in range(length):
+        # Add the maximum number of repeats
+        sequence.append(hm.getNextNumber(sequence, hashmap))
 
-    #     # Generate the new hashes and add them to the hasmap
-    #     hashmap.append(generateHashmapNumbers(sequence, hashmap))
+        # Generate the new hashes and add them to the hasmap
+        hashmap.append(hm.generateHashmapNumbers(sequence, hashmap))
 
-    #     # clean up hashmap
-    #     hashmap = cleanupHashmap(sequence, hashmap)
+        # clean up hashmap
+        hashmap = hm.cleanupHashmap(sequence, hashmap)
 
-    # t2 = time.time()
+    t2 = time.time()
 
-    # # print(sequence)
-    # print(f"Elapsed: {round((t2 - t1) * 1000)} ms hashmap")
+    # print(sequence)
+    print(f"Elapsed: {round((t2 - t1) * 1000)} ms hashmap")
 
-    # sequence2 = [1, 1, 2]
+    sequence2 = [1, 1, 2]
         
-    # t3 = time.time()
-    # for _ in range(length):
-    #     sequence2.append(krul(sequence2))
-    # t4 = time.time()
-    # print(f"Elapsed: {round((t4 - t3) * 1000)} ms (n^3)")
+    t3 = time.time()
+    for _ in range(length):
+        sequence2.append(krulnaive.krul(sequence2))
+    t4 = time.time()
+    print(f"Elapsed: {round((t4 - t3) * 1000)} ms (n^3)")
 
     sequence3 = [1, 1, 2]
 
     t5 = time.time()
     for _ in range(length):
-        sequence3.append(krul(sequence3))
+        sequence3.append(krulautomaton.krul(sequence3))
     t6 = time.time()
     print(f"Elapsed: {round((t6 - t5) * 1000)} ms automaton")
 
@@ -165,12 +52,12 @@ def compare(length):
 # compare(500)
 # compare(1000)
 # compare(2000)
-# compare(5000)
+compare(5000)
 # compare(6000)
 # compare(7000)
 # compare(8000)
 # compare(9000)
 # compare(10000)
 # compare(20000)
-compare(50000)
+# compare(50000)
 # compare(100000)
