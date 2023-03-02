@@ -33,18 +33,7 @@ def getNextNumber(sequence : List[int], hashmap : List[List[int]]):
     Returns:
         int: Returns the next gijswijt number
     """
-    maxRepeats = 1
-
-    # Check for each possible length the repeating sequence can be
-    for repeatLength in range(1, (len(sequence)//2)+1):
-
-        # Select the number of repeats from the last row and add one
-        # '+ 1' should only be done when the hashes match, but it doesn't really matter
-        repeats = hashmap[-1][-repeatLength][1] + 1
-
-        maxRepeats = max(maxRepeats, repeats)
-
-    return maxRepeats
+    return max(map(lambda x: x[1], hashmap[-1]))
 
 def generateHashmapNumbers(sequence : List[int], hashmap : List[List[Tuple[int, int]]]) -> List[Tuple[int, int]]:
     """This function generates the new row of hash numbers.
@@ -63,7 +52,7 @@ def generateHashmapNumbers(sequence : List[int], hashmap : List[List[Tuple[int, 
 
     for x in range(len(sequence), 0, -1):
         has = hashList(sequence, hashmap, len(sequence)-1, x)
-        n = 0
+        n = 1
         if x <= (len(sequence)//2) and has == hashmap[-x][-x][0]:
                 n = hashmap[-x][-x][1] + 1            
         l.append((has, n))
@@ -76,3 +65,25 @@ def cleanupHashmap(sequence : List[int], hashmap : List[List[int]]) -> List[List
         hashmap.pop(0)
 
     return hashmap
+
+
+if __name__ == "__main__": 
+    
+    length = 10
+    sequence = [1, 1, 2]
+
+    hashmap = [[(hashList(sequence, [1], 0, 1), 1)]]
+    hashmap.append([(hashList([1, 1], hashmap, 1, 2), 1), (hashList([1, 1], hashmap, 1, 1), 2)])
+    hashmap.append([(hashList([1, 1, 2], hashmap, 2, 3), 1), (hashList([1, 1, 2], hashmap, 2, 2), 1), (hashList([1, 1, 2], hashmap, 2, 1), 1)])
+
+    for _ in range(length):
+        # Add the maximum number of repeats
+        sequence.append(getNextNumber(sequence, hashmap))
+
+        # Generate the new hashes and add them to the hasmap
+        hashmap.append(generateHashmapNumbers(sequence, hashmap))
+
+        # clean up hashmap
+        hashmap = cleanupHashmap(sequence, hashmap)
+
+    print(sequence)
