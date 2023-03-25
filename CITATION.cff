@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Boonstoppel"
+  given-names: "Steven"
+- family-names: "Boot"
+  given-names: "Sander"
+  orcid: "https://orcid.org/0009-0003-0292-5963"
+- family-names: "Janse"
+  given-names: "Alex"
+title: "Calculating the curling sequence"
+version: 1.0.0
+date-released: 2023-03-25
+url: "https://github.com/sanderBoot0/Gijswijt-sequences"
